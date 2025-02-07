@@ -1,0 +1,23 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+env:
+  TERM: DUMB
+  DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - name: Run tests
+        run: go test -coverprofile cov.out -race -coverpkg=./... ./...
+      - name: CodeCov Report
+        uses: k1LoW/octocov-action@v0
